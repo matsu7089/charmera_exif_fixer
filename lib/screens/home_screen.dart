@@ -8,11 +8,37 @@ import '../providers/app_state.dart';
 import '../logic/exif_processor.dart';
 import '../widgets/process_dialog.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late TextEditingController _makerController;
+  late TextEditingController _modelController;
+
+  @override
+  void initState() {
+    super.initState();
+    _makerController = TextEditingController(
+      text: ref.read(cameraMakerProvider),
+    );
+    _modelController = TextEditingController(
+      text: ref.read(cameraModelProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _makerController.dispose();
+    _modelController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final inputUri = ref.watch(inputPathProvider);
     final outputPath = ref.watch(outputPathProvider);
     final isProcessing = ref.watch(processingProvider).isProcessing;
@@ -72,15 +98,6 @@ class HomeScreen extends ConsumerWidget {
                       onPressed: isProcessing
                           ? null
                           : () async {
-                              // Permission check might be needed for file_picker
-                              /*
-                        if (!await Permission.storage.request().isGranted) {
-                             if (!await Permission.manageExternalStorage.request().isGranted) {
-                                // handle denial
-                             }
-                        }
-                        */
-
                               String? result = await FilePicker.platform
                                   .getDirectoryPath();
                               if (result != null) {
@@ -98,6 +115,7 @@ class HomeScreen extends ConsumerWidget {
             const Gap(16),
             // Options
             TextField(
+              controller: _makerController,
               decoration: const InputDecoration(
                 labelText: 'Camera Maker (Optional)',
                 border: OutlineInputBorder(),
@@ -108,6 +126,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             const Gap(16),
             TextField(
+              controller: _modelController,
               decoration: const InputDecoration(
                 labelText: 'Camera Model Name (Optional)',
                 border: OutlineInputBorder(),
