@@ -10,8 +10,8 @@ class LightText extends StatelessWidget {
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: TextStyle(
-        color: const Color(0xFF000000).withOpacity(.2),
+      style: const TextStyle(
+        color: const Color(0x33000000),
       ),
     );
   }

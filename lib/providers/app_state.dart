@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:charmera_exif_fixer/providers/storage_provider.dart';
 
 class ProcessingState {
   final bool isProcessing;
@@ -73,9 +74,24 @@ final processingProvider =
     );
 
 class InputPathNotifier extends Notifier<Uri?> {
+  static const _key = 'input_path';
+
   @override
-  Uri? build() => null;
-  void setPath(Uri? uri) => state = uri;
+  Uri? build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final path = prefs.getString(_key);
+    return path != null ? Uri.parse(path) : null;
+  }
+
+  void setPath(Uri? uri) {
+    state = uri;
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (uri != null) {
+      prefs.setString(_key, uri.toString());
+    } else {
+      prefs.remove(_key);
+    }
+  }
 }
 
 final inputPathProvider = NotifierProvider<InputPathNotifier, Uri?>(
@@ -83,9 +99,23 @@ final inputPathProvider = NotifierProvider<InputPathNotifier, Uri?>(
 );
 
 class OutputPathNotifier extends Notifier<String?> {
+  static const _key = 'output_path';
+
   @override
-  String? build() => null;
-  void setPath(String? path) => state = path;
+  String? build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getString(_key);
+  }
+
+  void setPath(String? path) {
+    state = path;
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (path != null) {
+      prefs.setString(_key, path);
+    } else {
+      prefs.remove(_key);
+    }
+  }
 }
 
 final outputPathProvider = NotifierProvider<OutputPathNotifier, String?>(
@@ -93,9 +123,19 @@ final outputPathProvider = NotifierProvider<OutputPathNotifier, String?>(
 );
 
 class CameraModelNotifier extends Notifier<String> {
+  static const _key = 'camera_model';
+
   @override
-  String build() => '';
-  void setModel(String model) => state = model;
+  String build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getString(_key) ?? '';
+  }
+
+  void setModel(String model) {
+    state = model;
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setString(_key, model);
+  }
 }
 
 final cameraModelProvider = NotifierProvider<CameraModelNotifier, String>(
@@ -103,9 +143,19 @@ final cameraModelProvider = NotifierProvider<CameraModelNotifier, String>(
 );
 
 class CameraMakerNotifier extends Notifier<String> {
+  static const _key = 'camera_maker';
+
   @override
-  String build() => '';
-  void setMaker(String maker) => state = maker;
+  String build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getString(_key) ?? '';
+  }
+
+  void setMaker(String maker) {
+    state = maker;
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setString(_key, maker);
+  }
 }
 
 final cameraMakerProvider = NotifierProvider<CameraMakerNotifier, String>(
