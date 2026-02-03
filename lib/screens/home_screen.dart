@@ -45,109 +45,111 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Charmera Exif Fixer')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Input Selection
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Input Folder',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Gap(8),
-                    Text(inputUri?.toString() ?? 'No folder selected'),
-                    const Gap(8),
-                    ElevatedButton(
-                      onPressed: isProcessing
-                          ? null
-                          : () async {
-                              final uri = await saf.openDocumentTree();
-                              if (uri != null) {
-                                ref
-                                    .read(inputPathProvider.notifier)
-                                    .setPath(uri);
-                              }
-                            },
-                      child: const Text('Select Input Folder'),
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Input Selection
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Input Folder',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Gap(8),
+                      Text(inputUri?.toString() ?? 'No folder selected'),
+                      const Gap(8),
+                      ElevatedButton(
+                        onPressed: isProcessing
+                            ? null
+                            : () async {
+                                final uri = await saf.openDocumentTree();
+                                if (uri != null) {
+                                  ref
+                                      .read(inputPathProvider.notifier)
+                                      .setPath(uri);
+                                }
+                              },
+                        child: const Text('Select Input Folder'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const Gap(16),
-            // Output Selection
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Output Folder',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Gap(8),
-                    Text(outputPath ?? 'No folder selected'),
-                    const Gap(8),
-                    ElevatedButton(
-                      onPressed: isProcessing
-                          ? null
-                          : () async {
-                              String? result = await FilePicker.platform
-                                  .getDirectoryPath();
-                              if (result != null) {
-                                ref
-                                    .read(outputPathProvider.notifier)
-                                    .setPath(result);
-                              }
-                            },
-                      child: const Text('Select Output Folder'),
-                    ),
-                  ],
+              const Gap(16),
+              // Output Selection
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Output Folder',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Gap(8),
+                      Text(outputPath ?? 'No folder selected'),
+                      const Gap(8),
+                      ElevatedButton(
+                        onPressed: isProcessing
+                            ? null
+                            : () async {
+                                String? result = await FilePicker.platform
+                                    .getDirectoryPath();
+                                if (result != null) {
+                                  ref
+                                      .read(outputPathProvider.notifier)
+                                      .setPath(result);
+                                }
+                              },
+                        child: const Text('Select Output Folder'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const Gap(16),
-            // Options
-            TextField(
-              controller: _makerController,
-              decoration: const InputDecoration(
-                labelText: 'Camera Maker (Optional)',
-                border: OutlineInputBorder(),
+              const Gap(16),
+              // Options
+              TextField(
+                controller: _makerController,
+                decoration: const InputDecoration(
+                  labelText: 'Camera Maker (Optional)',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  ref.read(cameraMakerProvider.notifier).setMaker(value);
+                },
               ),
-              onChanged: (value) {
-                ref.read(cameraMakerProvider.notifier).setMaker(value);
-              },
-            ),
-            const Gap(16),
-            TextField(
-              controller: _modelController,
-              decoration: const InputDecoration(
-                labelText: 'Camera Model Name (Optional)',
-                border: OutlineInputBorder(),
+              const Gap(16),
+              TextField(
+                controller: _modelController,
+                decoration: const InputDecoration(
+                  labelText: 'Camera Model Name (Optional)',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  ref.read(cameraModelProvider.notifier).setModel(value);
+                },
               ),
-              onChanged: (value) {
-                ref.read(cameraModelProvider.notifier).setModel(value);
-              },
-            ),
-            // Start Button
-            const Gap(32),
-            SizedBox(
-              height: 50,
-              child: ElevatedButton(
-                onPressed:
-                    (inputUri != null && outputPath != null && !isProcessing)
-                    ? () => _startProcessing(context, ref)
-                    : null,
-                child: const Text('Start Processing'),
+              // Start Button
+              const Gap(32),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed:
+                      (inputUri != null && outputPath != null && !isProcessing)
+                      ? () => _startProcessing(context, ref)
+                      : null,
+                  child: const Text('Start Processing'),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
